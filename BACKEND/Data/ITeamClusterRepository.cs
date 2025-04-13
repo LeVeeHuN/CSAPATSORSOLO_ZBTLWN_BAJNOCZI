@@ -15,7 +15,7 @@ namespace BACKEND.Data
         void Create(TeamCluster teamCluster);
 
         IEnumerable<TeamCluster> Read();
-        TeamCluster Read(int id);
+        TeamCluster? Read(int id);
 
         void Update(TeamCluster teamCluster);
 
