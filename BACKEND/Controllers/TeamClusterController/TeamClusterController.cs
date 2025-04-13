@@ -31,13 +31,13 @@ namespace BACKEND.Controllers.TeamClusterController
         [HttpGet]
         public IEnumerable<TeamCluster> Get()
         {
-            throw new NotImplementedException();
+            return _repo.Read();
         }
 
         [HttpGet("{id}")]
-        public TeamCluster Get(int id)
+        public TeamCluster? Get(int id)
         {
-            throw new NotImplementedException();
+            return _repo.Read(id);
         }
 
         #endregion
