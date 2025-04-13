@@ -10,10 +10,12 @@ namespace BACKEND.Controllers.TeamClusterController
     public class TeamClusterController : ControllerBase
     {
         private ITeamClusterRepository _repo;
+        private int _teamCounter;
 
         public TeamClusterController(ITeamClusterRepository repository)
         {
             _repo = repository;
+            _teamCounter = 0;
         }
 
         #region Create
@@ -21,7 +23,66 @@ namespace BACKEND.Controllers.TeamClusterController
         [HttpPost]
         public void Add([FromBody] InboundRequestData data)
         {
-            throw new NotImplementedException();
+            // Check data validity
+            if (data.Names.Count != data.Ages.Count)
+            {
+                return;
+            }
+            if (data.Names.Count < data.TeamsCount)
+            {
+                return;
+            }
+
+            // Create objects from incoming data
+            List<Person> persons = new List<Person>();
+            for (int i = 0; i < data.Names.Count; i++)
+            {
+                persons.Add(new Person { Name = data.Names[i], Age = data.Ages[i] });
+            }
+
+            // Determine the median age
+            int[] ages = data.Ages.ToArray();
+            Array.Sort(ages);
+
+            float middleIndex = (ages.Length - 1) / 2.0f;
+            float medianAge = (ages[(int)Math.Floor(middleIndex)] + ages[(int)Math.Ceiling(middleIndex)]) / 2.0f;
+
+            // Seperate old people from young ones
+            List<Person> oldPeople = new List<Person>();
+            List<Person> youngPeople = new List<Person>();
+            foreach (Person p in persons)
+            {
+                if (p.IsOld(medianAge))
+                {
+                    oldPeople.Add(p);
+                }
+                else
+                {
+                    youngPeople.Add(p);
+                }
+            }
+
+            // Shuffle the separeted lists
+            Person[] oldPeopleArr = oldPeople.ToArray();
+            Person[] youngPeopleArr = youngPeople.ToArray();
+            Random.Shared.Shuffle(oldPeopleArr);
+            Random.Shared.Shuffle(youngPeopleArr);
+
+            // Make the teams
+            Team[] teams = new Team[data.TeamsCount];
+            for (int i = 0; i < teams.Length; i++)
+            {
+                teams[i] = new Team();
+            }
+
+            // Distribute people across the teams
+            _teamCounter = 0;
+            DistributePeopleToTeams(ref teams, ref oldPeopleArr);
+            DistributePeopleToTeams(ref teams, ref youngPeopleArr);
+
+            TeamCluster teamCluster = new TeamCluster();
+            teamCluster.Teams = teams.OfType<Team>().ToList();
+            _repo.Create(teamCluster);
         }
 
         #endregion
@@ -71,5 +132,18 @@ namespace BACKEND.Controllers.TeamClusterController
         }
 
         #endregion
+
+        private void DistributePeopleToTeams(ref Team[] teams, ref Person[] people)
+        {
+            for (int i = 0; i < people.Length; i++)
+            {
+                // If _teamCounter is out of bounds, reset it
+                if (_teamCounter == teams.Length)
+                {
+                    _teamCounter = 0;
+                }
+                teams[_teamCounter].Members.Add(people[i]);
+            }
+        }
     }
 }
