@@ -47,7 +47,12 @@ namespace BACKEND.Controllers.TeamClusterController
         [HttpPut]
         public void Update([FromBody] TeamCluster teamCluster)
         {
-            throw new NotImplementedException();
+            // Check if ID is valid
+            TeamCluster? tc = _repo.Read(teamCluster.Id);
+            if (tc != null)
+            {
+                _repo.Update(teamCluster);
+            }
         }
 
         #endregion
