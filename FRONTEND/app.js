@@ -12,6 +12,7 @@ class OutBoundData
 
 // Event hozzáadása a gombhoz
 document.getElementById("saveChanges").addEventListener("click", () => {console.log("Nothing to see yet")})
+document.getElementById("addMemberBtn").addEventListener("click", AddNewInputField)
 
 function GetInputFieldsValues(event)
 {
@@ -42,7 +43,64 @@ function GetInputFieldsValues(event)
 
 function AddNewInputField()
 {
+    inputCounter++
+
     // ezen belülre jönnek majd a plussz input sorok
     const baseDataContainer = document.getElementById("members")
 
+    // create row element
+    const rowContainer = document.createElement("div")
+    //set classes
+    rowContainer.setAttribute("class", "row")
+    rowContainer.classList.add("mb-2")
+    rowContainer.classList.add("align-items-center")
+
+    // create name input
+    const nameInputDiv = document.createElement("div")
+    nameInputDiv.setAttribute("class", "col-md-7")
+    const nameInput = document.createElement("input")
+    nameInput.setAttribute("type", "text")
+    nameInput.setAttribute("class", "form-control")
+    nameInput.setAttribute("name", "name-"+inputCounter)
+    nameInput.setAttribute("placeholder", "Név")
+    nameInput.setAttribute("id", "name-"+inputCounter)
+
+    // Add name input to the base
+    nameInputDiv.appendChild(nameInput)
+    rowContainer.appendChild(nameInputDiv)
+
+    // create age input
+    const ageInputDiv = document.createElement("div")
+    ageInputDiv.setAttribute("class", "col-md-3")
+    const ageInput = document.createElement("input")
+    ageInput.setAttribute("type", "number")
+    ageInput.setAttribute("class", "form-control")
+    ageInput.setAttribute("name", "age-"+inputCounter)
+    ageInput.setAttribute("placeholder", "Életkor")
+    ageInput.setAttribute("id", "age-"+inputCounter)
+    ageInput.setAttribute("min", "0")
+
+    // add age input to the base
+    ageInputDiv.appendChild(ageInput)
+    rowContainer.appendChild(ageInputDiv)
+
+    // create delete buttons
+    const deleteBtnDiv = document.createElement("div")
+    deleteBtnDiv.setAttribute("class", "col-md-2")
+    deleteBtnDiv.classList.add("d-flex")
+    deleteBtnDiv.classList.add("justify-content-end")
+    const deleteBtn = document.createElement("button")
+    deleteBtn.setAttribute("type", "button")
+    deleteBtn.setAttribute("class", "btn")
+    deleteBtn.classList.add("btn-danger")
+    deleteBtn.classList.add("btn-sm")
+    deleteBtn.classList.add("delete-row")
+    deleteBtn.setAttribute("id", "delete-"+inputCounter)
+    deleteBtn.innerHTML = "Törlés"
+
+    // add delete buttons to the base
+    deleteBtnDiv.appendChild(deleteBtn)
+    rowContainer.appendChild(deleteBtnDiv)
+
+    baseDataContainer.appendChild(rowContainer)
 }
