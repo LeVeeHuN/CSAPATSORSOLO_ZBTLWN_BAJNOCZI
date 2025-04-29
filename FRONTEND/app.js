@@ -4,21 +4,18 @@ class OutBoundData
 {
     constructor(teamsCount, names, ages)
     {
-        this.TeamsCount = teamsCount
+        this.TeamsCount = Number(teamsCount)
         this.Names = names
         this.Ages = ages.map(Number)
     }
 }
 
 // Event hozzáadása a gombhoz
-document.getElementById("saveChanges").addEventListener("click", () => {console.log("Nothing to see yet")})
+document.getElementById("saveChanges").addEventListener("click", SendDataToServer)
 document.getElementById("addMemberBtn").addEventListener("click", AddNewInputField)
 
-function GetInputFieldsValues(event)
+function GetInputFieldsValues()
 {
-    // By doing this the page no longer reloads after submitting the form
-    event.preventDefault()
-
     // Átiterálok az összes számon 1-től az inputCounter értékéig (belevéve azt) és kiszedem az összes nevet és kort
     // Ezeken kívül a csapatok számát is kiszedem
     const namesContainer = []
@@ -30,7 +27,6 @@ function GetInputFieldsValues(event)
     // Nevek és korok megszerzése
     const nameBase = "name-"
     const ageBase = "age-"
-    // TODO: Ha null a getElement, akkor ne pusholjam
     for (let i = 1; i <= inputCounter; i++)
     {
         const nameInput = document.getElementById(nameBase+i)
@@ -43,7 +39,6 @@ function GetInputFieldsValues(event)
     }
 
     const outBoundDataObject = new OutBoundData(teamsCount, namesContainer, agesContainer)
-    // console.log(outBoundDataObject)
     return outBoundDataObject
 }
 
@@ -153,6 +148,101 @@ function CheckIfDeleteRowIsPossible()
     }
 }
 
+function Reset()
+{
+    const membersParent = document.getElementById("members")
+    const resultsParent = document.getElementById("teamClusterContainer")
+
+    while (resultsParent.firstChild)
+    {
+        resultsParent.removeChild(resultsParent.firstChild)
+    }
+
+    while (membersParent.firstChild)
+    {
+        membersParent.removeChild(membersParent.firstChild)
+    }
+
+    for (let i = 0; i < 2; i++)
+    {
+        AddNewInputField()
+    }
+}
+
+function SendDataToServer(event)
+{
+    // By doing this the page no longer reloads after submitting the form
+    event.preventDefault()
+
+    // Get the data and convert it to json
+    const outBoundDataObject = GetInputFieldsValues()
+    const jsonString = JSON.stringify(outBoundDataObject)
+    Reset()
+
+    fetch("http://localhost:5008/teamcluster", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json; charset=UTF-8"
+        },
+        body: jsonString
+    })
+    .then(response => response.json())
+    .then(responseData => {
+        // Adatok megjelenítése
+        const teams = responseData.teams
+        const teamsContainer = document.getElementById("teamClusterContainer")
+
+        // átiterálok az összes csapaton
+        for (let i = 0; i < teams.length; i++)
+        {
+            const teamContainer = document.createElement("div")
+            teamContainer.setAttribute("class", "p-3")
+            teamContainer.classList.add("rounded")
+            teamContainer.classList.add("shadow")
+            teamContainer.style.cssText = "background: " + GetRandomBrightColor() + "; min-width: 250px; max-width: 300px;"
+
+            // add team name
+            const teamName = document.createElement("h5")
+            teamName.setAttribute("class", "mb-3")
+            teamName.classList.add("text-black")
+            teamName.innerHTML = "Csapat: " + i
+            teamContainer.appendChild(teamName)
+
+            // add list for members
+            const list = document.createElement("ul")
+            list.setAttribute("class", "list-group")
+            list.classList.add("list-group-flush")
+
+            // add members to list
+            for (let j = 0; j < teams[i].members.length; j++)
+            {
+                const memberItem = document.createElement("li")
+                memberItem.setAttribute("class", "list-group-item")
+                memberItem.classList.add("bg-transparent")
+                memberItem.innerHTML = teams[i].members[j].name + " (" + teams[i].members[j].age + ")"
+                list.appendChild(memberItem)
+            }
+            teamContainer.appendChild(list)
+            teamsContainer.appendChild(teamContainer)
+        }
+    })
+    .catch(error => {
+        console.error("Error: " + error)
+    })
+}
+
+function GetRandomBrightColor() {
+    // Hue: 0-360 (full spectrum)
+    // Saturation: 80-100% (vivid)
+    // Lightness: 60-70% (bright)
+    const hue = Math.floor(Math.random() * 361);
+    const saturation = Math.floor(Math.random() * 21) + 80; // 80-100%
+    const lightness = Math.floor(Math.random() * 11) + 60;  // 60-70%
+    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+}
+  
+  
+
 
 
 
@@ -160,7 +250,4 @@ function CheckIfDeleteRowIsPossible()
 
 
 // Initialize page (add 2 input row)
-for (let i = 0; i < 2; i++)
-{
-    AddNewInputField()
-}
+Reset()
