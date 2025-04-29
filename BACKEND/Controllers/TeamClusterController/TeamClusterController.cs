@@ -72,13 +72,13 @@ namespace BACKEND.Controllers.TeamClusterController
             Team[] teams = new Team[data.TeamsCount];
             for (int i = 0; i < teams.Length; i++)
             {
-                teams[i] = new Team();
+                teams[i] = new Team() {Members = new List<Person>()};
             }
 
             // Distribute people across the teams
             _teamCounter = 0;
-            DistributePeopleToTeams(ref teams, ref oldPeopleArr);
-            DistributePeopleToTeams(ref teams, ref youngPeopleArr);
+            DistributePeopleToTeams(teams, oldPeopleArr);
+            DistributePeopleToTeams(teams, youngPeopleArr);
 
             TeamCluster teamCluster = new TeamCluster();
             teamCluster.Teams = teams.OfType<Team>().ToList();
@@ -134,7 +134,7 @@ namespace BACKEND.Controllers.TeamClusterController
 
         #endregion
 
-        private void DistributePeopleToTeams(ref Team[] teams, ref Person[] people)
+        private void DistributePeopleToTeams(Team[] teams, Person[] people)
         {
             for (int i = 0; i < people.Length; i++)
             {
@@ -144,6 +144,7 @@ namespace BACKEND.Controllers.TeamClusterController
                     _teamCounter = 0;
                 }
                 teams[_teamCounter].Members.Add(people[i]);
+                _teamCounter++;
             }
         }
     }

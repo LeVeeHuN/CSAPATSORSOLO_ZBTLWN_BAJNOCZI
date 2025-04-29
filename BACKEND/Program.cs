@@ -1,3 +1,5 @@
+using BACKEND.Data;
+
 namespace BACKEND
 {
     public class Program
@@ -7,6 +9,7 @@ namespace BACKEND
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddControllersWithViews();
+            builder.Services.AddSingleton<ITeamClusterRepository, TeamClusterRepository>();
 
 
             var app = builder.Build();
@@ -23,7 +26,7 @@ namespace BACKEND
             .AllowCredentials()
             .AllowAnyMethod()
             .AllowAnyHeader()
-            .WithOrigins("http://localhost:5500"));
+            .WithOrigins("http://127.0.0.1:5500"));
 
             app.Run();
         }
