@@ -106,6 +106,8 @@ function AddNewInputField()
     rowContainer.appendChild(deleteBtnDiv)
 
     baseDataContainer.appendChild(rowContainer)
+
+    CheckIfDeleteRowIsPossible()
 }
 
 function DeleteRow(event)
@@ -116,6 +118,34 @@ function DeleteRow(event)
     const parentContainer = document.getElementById("members")
     const rowToDelete = document.getElementById("row-"+rowId)
     parentContainer.removeChild(rowToDelete)
+
+    CheckIfDeleteRowIsPossible()
+}
+
+function CheckIfDeleteRowIsPossible()
+{
+    // Ha csak 2 row van, akkor kikapcsoljuk a törlés gombokat, egyébként aktiváljuk őket
+    const rowsNumber = document.getElementById("members").childElementCount
+
+    // get all the buttons
+    const btns = document.getElementsByClassName("delete-row")
+
+    if (rowsNumber <= 2)
+    {
+        // Disable buttons
+        for (let i = 0; i < btns.length; i++)
+        {
+            btns[i].disabled = true
+        }
+    }
+    else
+    {
+        // Enable buttons
+        for (let i = 0; i < btns.length; i++)
+        {
+            btns[i].disabled = false
+        }
+    }
 }
 
 
