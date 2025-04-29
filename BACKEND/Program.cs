@@ -12,7 +12,13 @@ namespace BACKEND
             var app = builder.Build();
 
 
+            app.UseRouting();
+            app.MapControllerRoute(
+                name: "default",
+                pattern: "{controller}/{action=Index}/{id?}");
+            
             app.MapGet("/", () => "Hello World!");
+            
             app.UseCors(x => x
             .AllowCredentials()
             .AllowAnyMethod()
