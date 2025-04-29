@@ -21,16 +21,16 @@ namespace BACKEND.Controllers.TeamClusterController
         #region Create
 
         [HttpPost]
-        public void Add([FromBody] InboundRequestData data)
+        public TeamCluster? Add([FromBody] InboundRequestData data)
         {
             // Check data validity
             if (data.Names.Count != data.Ages.Count)
             {
-                return;
+                return null;
             }
             if (data.Names.Count < data.TeamsCount)
             {
-                return;
+                return null;
             }
 
             // Create objects from incoming data
@@ -83,6 +83,7 @@ namespace BACKEND.Controllers.TeamClusterController
             TeamCluster teamCluster = new TeamCluster();
             teamCluster.Teams = teams.OfType<Team>().ToList();
             _repo.Create(teamCluster);
+            return teamCluster;
         }
 
         #endregion
