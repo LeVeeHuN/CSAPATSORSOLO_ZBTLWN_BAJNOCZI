@@ -33,8 +33,13 @@ function GetInputFieldsValues(event)
     // TODO: Ha null a getElement, akkor ne pusholjam
     for (let i = 1; i <= inputCounter; i++)
     {
-        namesContainer.push(document.getElementById(nameBase+i).value)
-        agesContainer.push(document.getElementById(ageBase+i).value)
+        const nameInput = document.getElementById(nameBase+i)
+        const ageInput = document.getElementById(ageBase+i)
+        if (nameInput != null && ageInput != null)
+        {
+            namesContainer.push(nameInput.value)
+            agesContainer.push(ageInput.value)
+        }
     }
 
     const outBoundDataObject = new OutBoundData(teamsCount, namesContainer, agesContainer)
