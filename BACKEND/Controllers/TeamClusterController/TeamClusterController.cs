@@ -33,6 +33,14 @@ namespace BACKEND.Controllers.TeamClusterController
                 return null;
             }
 
+            foreach (string name in data.Names)
+            {
+                if (string.IsNullOrWhiteSpace(name))
+                {
+                    return null;
+                }
+            }
+
             // Create objects from incoming data
             List<Person> persons = new List<Person>();
             for (int i = 0; i < data.Names.Count; i++)
