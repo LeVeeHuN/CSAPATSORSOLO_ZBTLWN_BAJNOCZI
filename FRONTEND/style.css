@@ -1,0 +1,10 @@
+.grayable:hover{
+    scale: 1.05;
+    transition: 500ms;
+    filter: grayscale(100%);
+    -webkit-filter: grayscale(100%);
+}
+
+.grayable{
+    transition: 500ms;
+}
