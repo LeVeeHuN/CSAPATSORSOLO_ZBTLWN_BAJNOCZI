@@ -205,7 +205,7 @@ function SendDataToServer(event)
             const teamName = document.createElement("h5")
             teamName.setAttribute("class", "mb-3")
             teamName.classList.add("text-black")
-            teamName.innerHTML = "Csapat: " + i
+            teamName.innerHTML = "Csapat: " + (i+1)
             teamContainer.appendChild(teamName)
 
             // add list for members
