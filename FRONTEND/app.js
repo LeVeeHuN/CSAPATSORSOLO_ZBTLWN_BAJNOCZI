@@ -1,4 +1,4 @@
-let inputCounter = 2
+let inputCounter = 0
 
 class OutBoundData
 {
@@ -30,6 +30,7 @@ function GetInputFieldsValues(event)
     // Nevek és korok megszerzése
     const nameBase = "name-"
     const ageBase = "age-"
+    // TODO: Ha null a getElement, akkor ne pusholjam
     for (let i = 1; i <= inputCounter; i++)
     {
         namesContainer.push(document.getElementById(nameBase+i).value)
@@ -51,6 +52,7 @@ function AddNewInputField()
     // create row element
     const rowContainer = document.createElement("div")
     //set classes
+    rowContainer.setAttribute("id", "row-"+inputCounter)
     rowContainer.setAttribute("class", "row")
     rowContainer.classList.add("mb-2")
     rowContainer.classList.add("align-items-center")
@@ -97,10 +99,33 @@ function AddNewInputField()
     deleteBtn.classList.add("delete-row")
     deleteBtn.setAttribute("id", "delete-"+inputCounter)
     deleteBtn.innerHTML = "Törlés"
+    deleteBtn.addEventListener("click", DeleteRow)
 
     // add delete buttons to the base
     deleteBtnDiv.appendChild(deleteBtn)
     rowContainer.appendChild(deleteBtnDiv)
 
     baseDataContainer.appendChild(rowContainer)
+}
+
+function DeleteRow(event)
+{
+    const rowId = event.target.id.split("-")[1]
+
+    // Delete specified row
+    const parentContainer = document.getElementById("members")
+    const rowToDelete = document.getElementById("row-"+rowId)
+    parentContainer.removeChild(rowToDelete)
+}
+
+
+
+
+
+
+
+// Initialize page (add 2 input row)
+for (let i = 0; i < 2; i++)
+{
+    AddNewInputField()
 }
